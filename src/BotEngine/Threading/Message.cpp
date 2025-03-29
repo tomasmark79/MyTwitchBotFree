@@ -2,11 +2,25 @@
 
 #include "PostOffice.h"
 
+#ifdef _WIN32
+  #include <windows.h>
+#else
+  #include <unistd.h>
+#endif
+
 #include <cstring>
 #include <iostream>
 #include <new>
-#include <unistd.h>
 #include <utility>
+
+void crossPlatformSleep (int microseconds)
+{
+#ifdef _WIN32
+  Sleep (microseconds / 1000); // Convert microseconds to milliseconds
+#else
+  usleep (microseconds);
+#endif
+}
 
 MessageResponse::MessageResponse (void)
   : valid (true), responseSet (false), response (NULL)
@@ -95,7 +109,9 @@ Message Message::sendAndAwaitResponse (const Address &from, const Address &to)
 
       return response;
     }
-    usleep (300);
+
+    crossPlatformSleep(300); // Replaced usleep(300)
+    // usleep (300);
   }
   RAIIMutex responseLock (mResponse);
   mResponse->valid = false;
