@@ -5,7 +5,7 @@
 
 # MyTwitchBotFree
 
-This repository provides a lightweight implementation for setting up and building a Twitch bot server. Original C++ twitch bot core code taken from https://github.com/jwkblades/TwitchChatBot. Glory to him!
+This repository offers a streamlined implementation for setting up and building a Twitch bot server. The original C++ core code was adapted from https://github.com/jwkblades/TwitchChatBot – kudos to the original creator! The bot is fully supported on Linux and macOS, while Windows users may need to make additional modifications.
 
 ---
 
