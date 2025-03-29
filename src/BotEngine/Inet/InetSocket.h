@@ -1,6 +1,7 @@
 #ifndef __SOCKET_H
 #define __SOCKET_H
 
+
 #ifdef _WIN32
   #include <winsock2.h>
   #include <ws2tcpip.h>
@@ -14,6 +15,12 @@
   #include <sys/types.h>
   #include <unistd.h>
 #endif
+
+#include <cstdlib>
+#include <errno.h>
+#include <cstring>
+#include <iostream>
+
 using namespace std;
 
 const int MAX_HOSTNAME_LENGTH = 200;
