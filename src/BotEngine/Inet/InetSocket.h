@@ -1,17 +1,19 @@
 #ifndef __SOCKET_H
 #define __SOCKET_H
 
-#include <arpa/inet.h>
-#include <cstdlib>
-#include <cstring>
-#include <errno.h>
-#include <iostream>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <poll.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
+#ifdef _WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #pragma comment(lib, "ws2_32.lib")
+#else
+  #include <arpa/inet.h>
+  #include <netdb.h>
+  #include <netinet/in.h>
+  #include <poll.h>
+  #include <sys/socket.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+#endif
 using namespace std;
 
 const int MAX_HOSTNAME_LENGTH = 200;
