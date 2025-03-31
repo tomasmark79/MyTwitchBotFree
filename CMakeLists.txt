@@ -79,6 +79,13 @@ cpm_licenses_create_disclaimer_target(
     write-licenses-${LIBRARY_NAME} "${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}_third_party.txt"
     "${CPM_PACKAGES}")
 
+# emojitools
+CPMAddPackage(
+    NAME EmojiTools
+    GITHUB_REPOSITORY tomasmark79/EmojiToolsFree
+    GIT_TAG main)
+file(COPY ${EmojiTools_SOURCE_DIR}/assets DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
+
 # ==============================================================================
 # include/ for public header files intended for use in other projects or modules.
 # ==============================================================================
@@ -161,8 +168,8 @@ target_link_libraries(
     PRIVATE nlohmann_json::nlohmann_json
     #   PRIVATE ZLIB::ZLIB
     #   PRIVATE yaml-cpp
+    PUBLIC EmojiTools
 )
-
 # ==============================================================================
 # set packageProject arttributes
 # ==============================================================================

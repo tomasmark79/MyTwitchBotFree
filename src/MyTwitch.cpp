@@ -28,7 +28,6 @@
 #include <thread>
 
 CommandSet mCommands;
-EmojiTools /*💋*/ emojiWrapper;
 
 std::atomic<bool> stopTimerThread;
 std::list<std::string> membersInRaffle;
@@ -37,13 +36,14 @@ bool raffleOpen = false;
 
 namespace library
 {
-
   MyTwitch::MyTwitch (const std::string &assetsPath)
     : m_assetsPath (assetsPath)
   {
     LOG_INFO ("MyTwitch v." + std::string (MYTWITCH_VERSION)
               + " constructed.");
     LOG_DEBUG ("Assets Path: " + this->m_assetsPath);
+
+    this->emojiTools = std::make_shared<EmojiSpace::EmojiTools> (m_assetsPath);
 
     Address commandParser ("commandParser");
     Address transceiver ("transceiver");
@@ -523,12 +523,12 @@ namespace library
         {
           stopTimerThread.store (false);
           std::thread threadTimer (
-            [] (Address commandParser, Address transceiver) -> void
+            [this] (Address commandParser, Address transceiver) -> void
             {
               while (!stopTimerThread.load ())
               {
                 std::cout << "startemojitimer" << std::endl;
-                std::string randomEmoji = emojiWrapper.getRandomEmoji ();
+                std::string randomEmoji = emojiTools->getRandomEmoji ();
                 Message msg ("PRIVMSG #digitalspacedotname : " + randomEmoji
                              + "\r\n");
                 msg.send (commandParser, transceiver);
@@ -579,7 +579,7 @@ namespace library
              const std::vector<std::string> &params) -> void
         {
           std::string randomEmoji
-            = emojiWrapper.getRandomEmojiFromGroup ("Smileys & Emotion");
+            = emojiTools->getRandomEmojiFromGroup ("Smileys & Emotion");
           Message msg ("PRIVMSG #digitalspacedotname : " + randomEmoji
                        + "\r\n");
           msg.send (commandParser, transceiver);
@@ -591,7 +591,7 @@ namespace library
              const std::vector<std::string> &params) -> void
         {
           std::string randomEmoji
-            = emojiWrapper.getRandomEmojiFromSubGroup ("country-flag");
+            = emojiTools->getRandomEmojiFromSubGroup ("country-flag");
           Message msg ("PRIVMSG #digitalspacedotname : " + randomEmoji
                        + "\r\n");
           msg.send (commandParser, transceiver);
@@ -603,7 +603,7 @@ namespace library
              const std::vector<std::string> &params) -> void
         {
           std::string randomEmoji
-            = emojiWrapper.getRandomEmojiFromSubGroup ("zodiac");
+            = emojiTools->getRandomEmojiFromSubGroup ("zodiac");
           Message msg ("PRIVMSG #digitalspacedotname : " + randomEmoji
                        + "\r\n");
           msg.send (commandParser, transceiver);
@@ -615,7 +615,7 @@ namespace library
              const std::vector<std::string> &params) -> void
         {
           std::string randomEmoji
-            = emojiWrapper.getRandomEmojiFromSubGroup ("gender");
+            = emojiTools->getRandomEmojiFromSubGroup ("gender");
           Message msg ("PRIVMSG #digitalspacedotname : " + randomEmoji
                        + "\r\n");
           msg.send (commandParser, transceiver);

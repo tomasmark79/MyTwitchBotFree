@@ -5,6 +5,10 @@
 // Copyright (c) 2024-2025 Tomáš Mark
 
 #include <string>
+#include <memory>
+
+#include <EmojiTools/EmojiTools.hpp>
+
 // Public API
 
 namespace library
@@ -21,7 +25,10 @@ namespace library
 
   private:
     std::string m_assetsPath;
-  };
+
+    std::shared_ptr<EmojiSpace::EmojiTools> /*💋*/ emojiTools;
+    std::string emoji;
+    };
 
 } // namespace library
 
