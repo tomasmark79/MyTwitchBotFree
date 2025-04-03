@@ -13,8 +13,7 @@
 #include <new>
 #include <utility>
 
-void crossPlatformSleep (int microseconds)
-{
+void crossPlatformSleep (int microseconds) {
 #ifdef _WIN32
   Sleep (microseconds / 1000); // Convert microseconds to milliseconds
 #else
@@ -22,41 +21,31 @@ void crossPlatformSleep (int microseconds)
 #endif
 }
 
-MessageResponse::MessageResponse (void)
-  : valid (true), responseSet (false), response (NULL)
-{
+MessageResponse::MessageResponse (void) : valid (true), responseSet (false), response (NULL) {
   // empty
 }
 
-Message::Message (void)
-  : mTo (), mFrom (), mResponse (NULL), mBuffer (NULL), mSize (0)
-{
+Message::Message (void) : mTo (), mFrom (), mResponse (NULL), mBuffer (NULL), mSize (0) {
   // empty
 }
-Message::Message (const void *rawBuffer, std::size_t bufferSize)
-{
+Message::Message (const void* rawBuffer, std::size_t bufferSize) {
   mSize = bufferSize;
-  try
-  {
+  try {
     mBuffer = new char[mSize];
     memcpy (mBuffer, rawBuffer, mSize);
-  }
-  catch (std::bad_alloc &ex)
-  {
+  } catch (std::bad_alloc& ex) {
     std::cerr << "Unable to allocate memory! " << ex.what () << std::endl;
   }
 }
-Message::Message (const std::string &src)
-  : Message (src.c_str (), src.size () + 1)
-{
+Message::Message (const std::string& src) : Message (src.c_str (), src.size () + 1) {
   // empty
 }
-Message::Message (const Message &src) { *this = src; }
+Message::Message (const Message& src) {
+  *this = src;
+}
 
-Message &Message::operator= (const Message &src)
-{
-  if (this == &src)
-  {
+Message& Message::operator= (const Message& src) {
+  if (this == &src) {
     return *this;
   }
 
@@ -64,41 +53,38 @@ Message &Message::operator= (const Message &src)
   mTo = src.mTo;
   mFrom = src.mFrom;
   mSize = src.mSize;
-  try
-  {
+  try {
     mBuffer = new char[mSize];
     memcpy (mBuffer, src.mBuffer, mSize);
-  }
-  catch (std::bad_alloc &ex)
-  {
+  } catch (std::bad_alloc& ex) {
     std::cerr << "Unable to allocate memory! " << ex.what () << std::endl;
   }
 
   return *this;
 }
 
-const Address &Message::from (void) const { return mFrom; }
-const Address &Message::to (void) const { return mTo; }
+const Address& Message::from (void) const {
+  return mFrom;
+}
+const Address& Message::to (void) const {
+  return mTo;
+}
 
-void Message::send (const Address &from, const Address &to)
-{
+void Message::send (const Address& from, const Address& to) {
   mFrom = from;
   mTo = to;
-  PostOffice *postOffice = PostOffice::instance ();
+  PostOffice* postOffice = PostOffice::instance ();
   postOffice->sendMessage (*this);
 }
-Message Message::sendAndAwaitResponse (const Address &from, const Address &to)
-{
+Message Message::sendAndAwaitResponse (const Address& from, const Address& to) {
   mFrom = from;
   mTo = to;
   mResponse = new MessageResponse ();
-  PostOffice *postOffice = PostOffice::instance ();
+  PostOffice* postOffice = PostOffice::instance ();
   postOffice->sendMessage (*this, true);
 
-  for (int i = 0; i < 10; i++)
-  {
-    if (mResponse->responseSet && mResponse->response)
-    {
+  for (int i = 0; i < 10; i++) {
+    if (mResponse->responseSet && mResponse->response) {
       RAIIMutex responseLock (mResponse);
       Message response = *(mResponse->response);
 
@@ -110,35 +96,34 @@ Message Message::sendAndAwaitResponse (const Address &from, const Address &to)
       return response;
     }
 
-    crossPlatformSleep(300); // Replaced usleep(300)
+    crossPlatformSleep (300); // Replaced usleep(300)
     // usleep (300);
   }
   RAIIMutex responseLock (mResponse);
   mResponse->valid = false;
   return Message ();
 }
-void Message::respond (Message &msg)
-{
-  if (mResponse && mResponse->valid)
-  {
+void Message::respond (Message& msg) {
+  if (mResponse && mResponse->valid) {
     msg.mTo = mFrom;
     msg.mFrom = mTo;
     RAIIMutex responseLock (mResponse);
     mResponse->response = new Message (msg);
     mResponse->responseSet = true;
-  }
-  else
-  {
+  } else {
     msg.send (mTo, mFrom);
   }
 }
 
-Message::~Message (void)
-{
+Message::~Message (void) {
   delete[] mBuffer;
   mBuffer = NULL;
 }
 
-std::size_t Message::size (void) const { return mSize; }
+std::size_t Message::size (void) const {
+  return mSize;
+}
 
-const char *Message::raw (void) const { return mBuffer; }
+const char* Message::raw (void) const {
+  return mBuffer;
+}

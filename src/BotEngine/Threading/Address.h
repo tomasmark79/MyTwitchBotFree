@@ -4,19 +4,18 @@
 #include <ostream>
 #include <string>
 
-class Address
-{
+class Address {
 public:
-  Address (const std::string &address = "");
-  Address (const Address &src);
+  Address (const std::string& address = "");
+  Address (const Address& src);
   ~Address (void);
 
-  bool operator< (const Address &other) const;
+  bool operator< (const Address& other) const;
 
-  Address &operator= (const std::string &src);
-  Address &operator= (const Address &src);
+  Address& operator= (const std::string& src);
+  Address& operator= (const Address& src);
 
-  friend std::ostream &operator<< (std::ostream &out, const Address &addr);
+  friend std::ostream& operator<< (std::ostream& out, const Address& addr);
 
 private:
   std::string mAddress;

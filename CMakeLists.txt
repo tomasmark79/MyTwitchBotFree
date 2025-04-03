@@ -168,7 +168,7 @@ target_link_libraries(
     PRIVATE nlohmann_json::nlohmann_json
     #   PRIVATE ZLIB::ZLIB
     #   PRIVATE yaml-cpp
-    PUBLIC EmojiTools
+    PUBLIC dotname::EmojiTools
 )
 # ==============================================================================
 # set packageProject arttributes
@@ -188,7 +188,7 @@ packageProject(
     INCLUDE_HEADER_PATTERN "*.h;*.hpp;*.hh;*.hxx"
     # semicolon separated list of the project's dependencies
     # DEPENDENCIES "zlib#1.2.11;fmt#11.1.1;CPMLicenses.cmake@0.0.7;nlohmann_json#3.11.2"
-    DEPENDENCIES "fmt#11.1.0;CPMLicenses.cmake@0.0.7"
+    DEPENDENCIES "fmt#11.1.0;CPMLicenses.cmake@0.0.7;nlohmann_json#3.11.2;EmojiTools#main"
     # (optional) create a header containing the version info
     # Note: that the path to headers should be lowercase, but is not enforced
     VERSION_HEADER "${LIBRARY_NAME}/version.h"

@@ -1,35 +1,40 @@
-#ifndef __MYTWITCH_H__
-#define __MYTWITCH_H__
-
 // MIT License
 // Copyright (c) 2024-2025 Tomáš Mark
 
+#ifndef __MYTWITCH_HPP
+#define __MYTWITCH_HPP
+
+#include <MyTwitch/version.h>
+#include <filesystem>
 #include <string>
 #include <memory>
-
 #include <EmojiTools/EmojiTools.hpp>
 
 // Public API
 
-namespace library
-{
+namespace dotname {
 
-  class MyTwitch
-  {
-  public:
-    MyTwitch (const std::string &assetsPath);
-    ~MyTwitch ();
+  class MyTwitch {
 
-    // alternatively, you can use a getter function
-    const std::string getAssetsPath () const { return m_assetsPath; }
-
-  private:
-    std::string m_assetsPath;
-
-    std::shared_ptr<EmojiSpace::EmojiTools> /*💋*/ emojiTools;
+    const std::string libName = std::string ("MyTwitch v.") + MYTWITCH_VERSION;
+    std::filesystem::path assetsPath_;
+    std::shared_ptr<dotname::EmojiTools> /*💋*/ emojiTools;
     std::string emoji;
-    };
 
-} // namespace library
+  public:
+    MyTwitch ();
+    MyTwitch (const std::filesystem::path& assetsPath);
+    ~MyTwitch ();
+    void Bot ();
 
-#endif // __MYTWITCH_H__
+    const std::filesystem::path getAssetsPath () const {
+      return assetsPath_;
+    }
+    void setAssetsPath (const std::filesystem::path& assetsPath) {
+      assetsPath_ = assetsPath;
+    }
+  };
+
+} // namespace dotname
+
+#endif // __MYTWITCH_HPP

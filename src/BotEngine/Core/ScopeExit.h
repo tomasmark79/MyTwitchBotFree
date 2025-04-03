@@ -4,15 +4,9 @@
 #include <exception>
 #include <functional>
 
-enum ScopeExitRun
-{
-  RUN_ON_SUCCESS = 1,
-  RUN_ON_FAILURE = 2,
-  RUN_ALWAYS = 3
-};
+enum ScopeExitRun { RUN_ON_SUCCESS = 1, RUN_ON_FAILURE = 2, RUN_ALWAYS = 3 };
 
-class ScopeExit
-{
+class ScopeExit {
 public:
   ScopeExit (ScopeExitRun whenToRun);
   ~ScopeExit (void);
@@ -24,8 +18,8 @@ private:
 };
 
 #define CONCAT(a, b) a##b
-#define SCOPE_HELPER(id, when)                                                \
-  ScopeExit CONCAT (_scope_exit_, id) (when);                                 \
+#define SCOPE_HELPER(id, when)                \
+  ScopeExit CONCAT (_scope_exit_, id) (when); \
   CONCAT (_scope_exit_, id) =
 #define SCOPE_EXIT SCOPE_HELPER (__COUNTER__, RUN_ALWAYS)
 #define SCOPE_FAILURE SCOPE_HELPER (__COUNTER__, RUN_ON_FAILURE)
