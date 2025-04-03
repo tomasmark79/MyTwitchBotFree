@@ -7,6 +7,16 @@
 
 This repository offers a streamlined implementation for setting up and building a Twitch bot server. The original C++ core code was adapted from https://github.com/jwkblades/TwitchChatBot – kudos to the original creator! The bot is fully supported on Linux and macOS, while Windows users may need to make additional modifications.
 
+# Reusability in another projects
+
+This project is a library accompanied by an executable file. You can use the library in your own project.
+
+[CMake compatible (CPM.cmake, FetchContent, or add_subdirectory).](https://github.com/tomasmark79/DotNameCppFree?tab=readme-ov-file#reusability-in-another-projects)
+
+## Standalone Example
+## Standalone Usage
+## References 
+
 ---
 
 <img src="assets/logo.png" alt="DotNameCpp Logo" width="20%">
@@ -18,4 +28,4 @@ This repository offers a streamlined implementation for setting up and building 
 MIT License  
 Copyright (c) 2024-2025 Tomáš Mark
 
-[👆🏻](#index)
+[👆🏻](#MyTwitchBotFree)
