@@ -9,6 +9,7 @@
 #include <string>
 #include <memory>
 #include <EmojiTools/EmojiTools.hpp>
+#include <Sunriset/Sunriset.hpp>
 
 // Public API
 
@@ -16,23 +17,17 @@ namespace dotname {
 
   class MyTwitch {
 
-    const std::string libName = std::string ("MyTwitch v.") + MYTWITCH_VERSION;
-    std::filesystem::path assetsPath_;
+    const std::string libName_ = std::string ("MyTwitch v.") + MYTWITCH_VERSION;
     std::shared_ptr<dotname::EmojiTools> /*💋*/ emojiTools;
     std::string emoji;
-
+    std::shared_ptr<dotname::Sunriset> sunrisetTools;
+    std::string getCurrentTime ();
+    std::string getSunriset ();
   public:
     MyTwitch ();
     MyTwitch (const std::filesystem::path& assetsPath);
     ~MyTwitch ();
     void Bot ();
-
-    const std::filesystem::path getAssetsPath () const {
-      return assetsPath_;
-    }
-    void setAssetsPath (const std::filesystem::path& assetsPath) {
-      assetsPath_ = assetsPath;
-    }
   };
 
 } // namespace dotname

@@ -2,6 +2,7 @@
 // Copyright (c) 2024-2025 Tomáš Mark
 
 #include <MyTwitch/MyTwitch.hpp>
+#include <Assets/AssetContext.hpp>
 #include <Logger/Logger.hpp>
 #include <Utils/Utils.hpp>
 
@@ -18,6 +19,7 @@
 #include "BotEngine/Threading/PostOffice.h"
 #include "nlohmann/json.hpp"
 #include <EmojiTools/EmojiTools.hpp>
+#include <Sunriset/Sunriset.hpp>
 
 #include <atomic>
 #include <fstream>
@@ -25,38 +27,65 @@
 #include <list>
 #include <set>
 #include <thread>
-
-CommandSet mCommands;
+#include <unistd.h>
+#include <ctime>
 
 std::atomic<bool> stopTimerThread;
 std::list<std::string> membersInRaffle;
 bool raffleOpen = false;
 #define EMOJI_INTERVAL_SEC (int)600
 
+CommandSet mCommands;
+
 namespace dotname {
 
   MyTwitch::MyTwitch () {
-    LOG_D_STREAM << libName << " ...constructed" << std::endl;
+    LOG_D_STREAM << libName_ << " constructed ..." << std::endl;
+    AssetContext::clearAssetsPath ();
   }
-  
+
   MyTwitch::MyTwitch (const std::filesystem::path& assetsPath) : MyTwitch () {
-    assetsPath_ = assetsPath;
-    if (!assetsPath_.empty ()) {
-      LOG_D_STREAM << "Assets path: " << assetsPath_ << std::endl;
-    } else {
-      LOG_D_STREAM << "Assets path is empty" << std::endl;
+    if (!assetsPath.empty ()) {
+      AssetContext::setAssetsPath (assetsPath);
+      LOG_D_STREAM << "Assets path given to the library\n"
+                   << "╰➤ " << AssetContext::getAssetsPath () << std::endl;
+      auto logo = std::ifstream (AssetContext::getAssetsPath () / "logo.png");
+
+      this->Bot ();
     }
-
-    this->Bot ();
-
   }
 
   MyTwitch::~MyTwitch () {
-    LOG_D_STREAM << libName << " ...destructed" << std::endl;
+    LOG_D_STREAM << libName_ << " ... destructed" << std::endl;
+  }
+
+  std::string MyTwitch::getCurrentTime () {
+    time_t now = time (0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime (&now);
+    strftime (buf, sizeof (buf), "%Y-%m-%d %X", &tstruct);
+    return buf;
+  }
+
+  std::string MyTwitch::getSunriset () {
+    std::string today = getCurrentTime ();
+    std::string year = today.substr (0, 4);
+    std::string month = today.substr (5, 2);
+    std::string day = today.substr (8, 2);
+    int yearInt = std::stoi (year);
+    int monthInt = std::stoi (month);
+    int dayInt = std::stoi (day);
+    double rise = 0.0;
+    double set = 0.0;
+    sunrisetTools->getSunriset (yearInt, monthInt, dayInt, 14.265802152828646, 49.86396819090531,
+                                rise, set);
+    return "Sunrise " + sunrisetTools->doubleTo24Time (rise + 2) + " and sunset "
+           + sunrisetTools->doubleTo24Time (set + 2) + " for today!";
   }
 
   void MyTwitch::Bot () {
-    this->emojiTools = std::make_shared<dotname::EmojiTools> (assetsPath_);
+    this->emojiTools = std::make_shared<dotname::EmojiTools> (AssetContext::getAssetsPath ());
 
     Address commandParser ("commandParser");
     Address transceiver ("transceiver");
@@ -476,6 +505,15 @@ namespace dotname {
                                    }
                                  } });
 
+    mCommands.registerCommand ({ "!sunriset", "return Sunrise Sunset",
+                                 [&] (const std::string& user, const std::string& channel,
+                                      const std::vector<std::string>& params) -> void {
+                                   std::string strSunriset = getSunriset ();
+                                   Message msg ("PRIVMSG #digitalspacedotname : " + strSunriset + " "
+                                                + "\r\n");
+                                   msg.send (commandParser, transceiver);
+                                 } });
+
     mCommands.registerCommand (
         { "!time", "return current time",
           [&] (const std::string& user, const std::string& channel,
@@ -664,6 +702,5 @@ namespace dotname {
 
     PostOffice::finalize ();
   }
-
 
 } // namespace dotname
